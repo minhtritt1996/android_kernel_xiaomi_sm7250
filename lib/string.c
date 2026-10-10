@@ -125,6 +125,21 @@ char *strncpy(char *dest, const char *src, size_t count)
 EXPORT_SYMBOL(strncpy);
 #endif
 
+#ifndef __HAVE_ARCH_STPCPY
+/**
+ * stpcpy - Copy a %NUL terminated string, returning pointer to %NUL at the end
+ * @dest: Where to copy the string to
+ * @src: Where to copy the string from
+ */
+char *stpcpy(char *dest, const char *src)
+{
+	while ((*dest++ = *src++) != '\0')
+		/* nothing */;
+	return --dest;
+}
+EXPORT_SYMBOL(stpcpy);
+#endif
+
 #ifndef __HAVE_ARCH_STRLCPY
 /**
  * strlcpy - Copy a C-string into a sized buffer

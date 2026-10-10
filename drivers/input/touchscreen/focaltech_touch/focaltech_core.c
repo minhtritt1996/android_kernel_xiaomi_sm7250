@@ -636,12 +636,14 @@ static int fts_input_report_b(struct fts_ts_data *data)
 			if (events[i].area <= 0) {
 				events[i].area = 0x09;
 			}
+#ifdef CONFIG_TOUCHSCREEN_FTS_FOD
 			if (!data->fod_finger_skip && fod_overlap_aera == 100) {
 				input_report_key(data->input_dev, BTN_INFO, 1);
 				data->fod_down_time++;
 				if (data->fod_down_time == 1)
 					FTS_INFO("Report_0x152 resume DOWN x:%d y:%d report_area %d success\n", events[i].x, events[i].y, fod_overlap_aera);
 			}
+#endif
 
 			input_report_abs(data->input_dev, ABS_MT_POSITION_X, events[i].x);
 			input_report_abs(data->input_dev, ABS_MT_POSITION_Y, events[i].y);
@@ -652,6 +654,7 @@ static int fts_input_report_b(struct fts_ts_data *data)
 				FTS_INFO("[B]P%d TOUCH_DOWN!", events[i].id);
 			touchs |= BIT(events[i].id);
 			data->touchs |= BIT(events[i].id);
+#ifdef CONFIG_TOUCHSCREEN_FTS_FOD
 			if (data->point_id_changed && data->old_point_id != 0xff
 				&& data->fod_status == 0 && data->old_point_id != events[i].id) {
 				FTS_INFO("%s FOD finger ID is Changed, release old id\n", __func__);
@@ -661,6 +664,7 @@ static int fts_input_report_b(struct fts_ts_data *data)
 				data->old_point_id = 0xff;
 				data->point_id_changed = false;
 			}
+#endif
 		} else {
 			uppoint++;
 			input_mt_report_slot_state(data->input_dev,
@@ -1435,10 +1439,12 @@ static int fts_set_cur_value(int mode, int value)
 
 	FTS_INFO("%s, mode:%d, value:%d\n", __func__, mode, value);
 
+#ifdef CONFIG_TOUCHSCREEN_FTS_FOD
 	if (mode == Touch_Fod_Enable && fts_data && value >= 0) {
 		fts_data->fod_status = value;
 		return 0;
 	}
+#endif
 	if (mode == Touch_Aod_Enable && fts_data && value >= 0) {
 		fts_data->aod_status = value;
 		return 0;
@@ -1924,6 +1930,7 @@ static int fb_notifier_callback(struct notifier_block *self, unsigned long event
 			queue_work(fts_data->event_wq, &fts_data->resume_work);
 		} else if (*blank == MI_DRM_BLANK_POWERDOWN || *blank == MI_DRM_BLANK_LP1 || *blank == MI_DRM_BLANK_LP2) {
 			FTS_INFO("FTS do suspend work by event %s\n", *blank == MI_DRM_BLANK_POWERDOWN ? "POWER DOWN" : "LP");
+#ifdef CONFIG_TOUCHSCREEN_FTS_FOD
 			if (*blank == MI_DRM_BLANK_POWERDOWN && fts_data->finger_in_fod) {
 				FTS_INFO("fb_notifier_callback:fod_status = %d\n", fts_data->fod_status);
 				if(fts_data->fod_status != -1 && fts_data->fod_status != 100){
@@ -1931,6 +1938,7 @@ static int fb_notifier_callback(struct notifier_block *self, unsigned long event
 					fts_data->fod_finger_skip = true;
 				}
 			}
+#endif
 			queue_work(fts_data->event_wq, &fts_data->suspend_work);
 		}
 	}
@@ -2120,8 +2128,10 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	ts_data->client = client;
 	ts_data->pdata = pdata;
 	ts_data->old_point_id = 0xff;
+#ifdef CONFIG_TOUCHSCREEN_FTS_FOD
 	ts_data->point_id_changed = false;
 	ts_data->fod_down_time = 0;
+#endif
 	i2c_set_clientdata(client, ts_data);
 
 	ts_data->ts_workqueue = create_singlethread_workqueue("fts_wq");
@@ -2522,12 +2532,16 @@ static int fts_ts_suspend(struct device *dev)
 #ifndef CONFIG_FACTORY_BUILD
 #if FTS_GESTURE_EN
 	if (fts_gesture_suspend(ts_data->client) == 0) {
+#ifdef CONFIG_TOUCHSCREEN_FTS_FOD
 		if(ts_data->fod_status == -1 || ts_data->fod_status == 100){
 			fts_fod_reg_write(ts_data->client, FTS_REG_GESTURE_FOD_ON, false);
 		}
+#endif
 		ts_data->suspended = true;
 		ts_data->old_point_id = 0xff;
+#ifdef CONFIG_TOUCHSCREEN_FTS_FOD
 		ts_data->point_id_changed = false;
+#endif
 		FTS_INFO("%s Tp enter suspend, set old_point_id as default value\n", __func__);
 		fts_irq_enable();
 		goto release_finger;
