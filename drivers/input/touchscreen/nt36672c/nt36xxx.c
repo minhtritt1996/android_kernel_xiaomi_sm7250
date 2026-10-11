@@ -3387,3 +3387,8 @@ late_initcall(nvt_driver_init);
 
 MODULE_DESCRIPTION("Novatek Touchscreen Driver");
 MODULE_LICENSE("GPL");
+
+/* Droidian/picasso port: stubs for Xiaomi perf hooks that have no provider
+ * in this tree (touch_irq_boost / lpm_disable_for_input). Safe no-ops. */
+void touch_irq_boost(void) {}
+void lpm_disable_for_input(bool on) { (void)on; }
