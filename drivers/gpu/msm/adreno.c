@@ -1931,6 +1931,9 @@ static int adreno_switch_to_unsecure_mode(struct adreno_device *adreno_dev,
 	unsigned int *cmds;
 	int ret;
 
+	if (adreno_is_a6xx(adreno_dev))
+		return 0;
+
 	cmds = adreno_ringbuffer_allocspace(rb, 2);
 	if (IS_ERR(cmds))
 		return PTR_ERR(cmds);
@@ -1965,7 +1968,7 @@ int adreno_set_unsecured_mode(struct adreno_device *adreno_dev,
 	/* GPU comes up in secured mode, make it unsecured by default */
 	if (adreno_dev->zap_loaded)
 		ret = adreno_switch_to_unsecure_mode(adreno_dev, rb);
-	else
+	else if (adreno_is_a5xx(adreno_dev))
 		adreno_writereg(adreno_dev,
 				ADRENO_REG_RBBM_SECVID_TRUST_CONTROL, 0x0);
 

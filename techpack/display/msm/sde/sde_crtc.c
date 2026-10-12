@@ -82,7 +82,7 @@ static struct sde_crtc_custom_events custom_events[] = {
 };
 
 /* default input fence timeout, in ms */
-#define SDE_CRTC_INPUT_FENCE_TIMEOUT    10000
+#define SDE_CRTC_INPUT_FENCE_TIMEOUT    1000
 
 /*
  * The default input fence timeout is 2 seconds while max allowed

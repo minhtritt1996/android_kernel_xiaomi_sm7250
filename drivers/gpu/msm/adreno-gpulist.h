@@ -1055,7 +1055,7 @@ static const struct adreno_a6xx_core adreno_gpu_core_a620 = {
 	.vbif = a650_gbif_regs,
 	.vbif_count = ARRAY_SIZE(a650_gbif_regs),
 	.veto_fal10 = true,
-	.hang_detect_cycles = 0x3ffff,
+	.hang_detect_cycles = 0xcfffff,
 	.protected_regs = a620_protected_regs,
 	.disable_tseskip = true,
 };

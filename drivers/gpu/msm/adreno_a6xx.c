@@ -529,7 +529,10 @@ static void a6xx_start(struct adreno_device *adreno_dev)
 		break;
 	case KGSL_UBWC_3_0:
 		mode = 0;
-		amsbc = 1; /* Only valid for A640 and A680 */
+		if (adreno_is_a640_family(adreno_dev) || adreno_is_a680(adreno_dev))
+			amsbc = 1;
+		else
+			amsbc = 0;
 		break;
 	case KGSL_UBWC_4_0:
 		mode = 0;
@@ -1427,10 +1430,7 @@ static void a6xx_gpc_err_int_callback(struct adreno_device *adreno_dev, int bit)
 	 (1 << A6XX_INT_CP_RB) |			\
 	 (1 << A6XX_INT_CP_CACHE_FLUSH_TS) |		\
 	 (1 << A6XX_INT_RBBM_ATB_BUS_OVERFLOW) |	\
-	 (1 << A6XX_INT_RBBM_HANG_DETECT) |		\
-	 (1 << A6XX_INT_UCHE_OOB_ACCESS) |		\
-	 (1 << A6XX_INT_UCHE_TRAP_INTR) |		\
-	 (1 << A6XX_INT_TSB_WRITE_ERROR))
+	 (1 << A6XX_INT_RBBM_HANG_DETECT))
 
 static struct adreno_irq_funcs a6xx_irq_funcs[32] = {
 	ADRENO_IRQ_CALLBACK(NULL),              /* 0 - RBBM_GPU_IDLE */

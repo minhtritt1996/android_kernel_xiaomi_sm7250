@@ -452,6 +452,7 @@ done_write:
 int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
 {
 	int ret;
+	int retries = 50000; /* 500ms timeout */
 
 	if (!msg || !msg->cmds || !msg->num_cmds ||
 	    msg->num_cmds > MAX_RPMH_PAYLOAD) {
@@ -465,6 +466,12 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
 			pr_info_ratelimited("DRV:%s TCS Busy, retrying RPMH message send: addr=%#x\n",
 					    drv->name, msg->cmds[0].addr);
 			udelay(10);
+			if (--retries == 0) {
+				pr_err("DRV:%s TCS Busy timeout! addr=%#x\n",
+				       drv->name, msg->cmds[0].addr);
+				ret = -ETIMEDOUT;
+				break;
+			}
 		}
 	} while (ret == -EBUSY);
 

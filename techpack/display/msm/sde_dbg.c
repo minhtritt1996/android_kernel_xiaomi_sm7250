@@ -21,7 +21,7 @@
 
 #define SDE_DBG_BASE_MAX		10
 
-#define DEFAULT_PANIC		1
+#define DEFAULT_PANIC		0
 #define DEFAULT_REGDUMP		SDE_DBG_DUMP_IN_MEM
 #define DEFAULT_DBGBUS_SDE	SDE_DBG_DUMP_IN_MEM
 #define DEFAULT_DBGBUS_VBIFRT	SDE_DBG_DUMP_IN_MEM
@@ -3527,88 +3527,8 @@ static void _sde_dump_work(struct work_struct *work)
 
 void sde_dbg_dump(enum sde_dbg_dump_context dump_mode, const char *name, ...)
 {
-	int i, index = 0;
-	bool do_panic = false;
-	bool dump_dbgbus_sde = false;
-	bool dump_dbgbus_vbif_rt = false;
-	bool dump_all = false;
-	bool dump_secure = false;
-	va_list args;
-	char *blk_name = NULL;
-	struct sde_dbg_reg_base *blk_base = NULL;
-	struct sde_dbg_reg_base **blk_arr;
-	u32 blk_len;
-
-	if (!sde_evtlog_is_enabled(sde_dbg_base.evtlog, SDE_EVTLOG_ALWAYS))
-		return;
-
-	if ((dump_mode == SDE_DBG_DUMP_IRQ_CTX) &&
-		work_pending(&sde_dbg_base.dump_work))
-		return;
-
-	blk_arr = &sde_dbg_base.req_dump_blks[0];
-	blk_len = ARRAY_SIZE(sde_dbg_base.req_dump_blks);
-
-	memset(sde_dbg_base.req_dump_blks, 0,
-			sizeof(sde_dbg_base.req_dump_blks));
-	sde_dbg_base.dump_all = false;
-	sde_dbg_base.dump_mode = dump_mode;
-
-	va_start(args, name);
-	i = 0;
-	while ((blk_name = va_arg(args, char*))) {
-		if (i++ >= SDE_EVTLOG_MAX_DATA) {
-			pr_err("could not parse all dump arguments\n");
-			break;
-		}
-		if (IS_ERR_OR_NULL(blk_name))
-			break;
-
-		blk_base = _sde_dump_get_blk_addr(blk_name);
-		if (blk_base) {
-			if (index < blk_len) {
-				blk_arr[index] = blk_base;
-				index++;
-			} else {
-				pr_err("insufficient space to to dump %s\n",
-						blk_name);
-			}
-		}
-
-		if (!strcmp(blk_name, "all"))
-			dump_all = true;
-
-		if (!strcmp(blk_name, "dbg_bus"))
-			dump_dbgbus_sde = true;
-
-		if (!strcmp(blk_name, "vbif_dbg_bus"))
-			dump_dbgbus_vbif_rt = true;
-
-		if (!strcmp(blk_name, "dsi_dbg_bus"))
-			sde_dbg_base.dsi_dbg_bus = true;
-
-		if (!strcmp(blk_name, "panic"))
-			do_panic = true;
-
-		if (!strcmp(blk_name, "secure"))
-			dump_secure = true;
-	}
-	va_end(args);
-
-	if (dump_mode == SDE_DBG_DUMP_IRQ_CTX) {
-		/* schedule work to dump later */
-		sde_dbg_base.work_panic = do_panic;
-		sde_dbg_base.dbgbus_sde.cmn.include_in_deferred_work =
-				dump_dbgbus_sde;
-		sde_dbg_base.dbgbus_vbif_rt.cmn.include_in_deferred_work =
-				dump_dbgbus_vbif_rt;
-		sde_dbg_base.dump_all = dump_all;
-		schedule_work(&sde_dbg_base.dump_work);
-	} else {
-		_sde_dump_array(blk_arr, blk_len, do_panic, name,
-				dump_dbgbus_sde, dump_dbgbus_vbif_rt,
-				dump_all, dump_secure);
-	}
+	/* Avoid multi-megabyte dumps that deadlock the kernel during display frame timeouts */
+	return;
 }
 
 void sde_dbg_ctrl(const char *name, ...)
