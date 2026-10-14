@@ -1396,7 +1396,7 @@ static int gmu_probe(struct kgsl_device *device, struct device_node *node)
 	else if (ADRENO_FEATURE(adreno_dev, ADRENO_HW_NAP))
 		gmu->idle_level = GPU_HW_NAP;
 	else if (ADRENO_FEATURE(adreno_dev, ADRENO_IFPC))
-		gmu->idle_level = GPU_HW_IFPC;
+		gmu->idle_level = GPU_HW_ACTIVE;
 	else if (ADRENO_FEATURE(adreno_dev, ADRENO_SPTP_PC))
 		gmu->idle_level = GPU_HW_SPTP_PC;
 	else
