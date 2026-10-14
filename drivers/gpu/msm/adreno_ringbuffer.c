@@ -448,11 +448,8 @@ int cp_secure_mode(struct adreno_device *adreno_dev, uint *cmds,
 {
 	uint *start = cmds;
 
-	if (adreno_is_a6xx(adreno_dev)) {
-		adreno_writereg(adreno_dev,
-				ADRENO_REG_RBBM_SECVID_TRUST_CONTROL, set ? 0x1 : 0x0);
+	if (adreno_is_a6xx(adreno_dev))
 		return 0;
-	}
 
 	/*
 	 * A5xx has a separate opcode specifically to put the GPU
