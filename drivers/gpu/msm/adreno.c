@@ -1931,6 +1931,9 @@ static int adreno_switch_to_unsecure_mode(struct adreno_device *adreno_dev,
 	unsigned int *cmds;
 	int ret;
 
+	if (adreno_is_a6xx(adreno_dev))
+		return 0;
+
 	cmds = adreno_ringbuffer_allocspace(rb, 2);
 	if (IS_ERR(cmds))
 		return PTR_ERR(cmds);
