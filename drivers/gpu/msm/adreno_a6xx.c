@@ -529,7 +529,10 @@ static void a6xx_start(struct adreno_device *adreno_dev)
 		break;
 	case KGSL_UBWC_3_0:
 		mode = 0;
-		amsbc = 1; /* Only valid for A640 and A680 */
+		if (adreno_is_a640_family(adreno_dev) || adreno_is_a680(adreno_dev))
+			amsbc = 1;
+		else
+			amsbc = 0;
 		break;
 	case KGSL_UBWC_4_0:
 		mode = 0;
