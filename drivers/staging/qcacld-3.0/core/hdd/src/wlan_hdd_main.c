@@ -15378,8 +15378,7 @@ static QDF_STATUS hdd_qdf_init(void)
 
 	status = qdf_debugfs_init();
 	if (QDF_IS_STATUS_ERROR(status)) {
-		hdd_err("Failed to init debugfs; status:%u", status);
-		goto print_deinit;
+		hdd_err("Failed to init debugfs; status:%u (ignored)", status);
 	}
 
 	qdf_lock_stats_init();

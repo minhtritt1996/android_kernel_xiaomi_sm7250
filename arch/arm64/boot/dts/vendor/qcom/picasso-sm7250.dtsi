@@ -622,9 +622,7 @@
 	qcom,string-cfg = <7>;
 	qcom,ovp = <28000>;
 	qcom,fs-current-limit = <22500>;
-	qcom,cabc-sel = <1>;
-	mi,cabcoff-dbv = <200>;
-	mi,cabc-pwm = <2924 4095>;
+	qcom,cabc-sel = <0>;
 };
 
 &pm8150l_rgb_led {
@@ -979,3 +977,16 @@
 &pm8008_8 {
 	pinctrl-0 = <&pm8008_active>; //liuqinhong@xiaomi.com
 };
+
+&dsi_g7a_36_02_0c_video {
+	qcom,mdss-dsi-force-clock-lane-hs;
+};
+
+&dsi_g7a_37_02_0a_video {
+	qcom,mdss-dsi-force-clock-lane-hs;
+};
+
+&dsi_g7a_37_02_0b_video {
+	qcom,mdss-dsi-force-clock-lane-hs;
+};
+

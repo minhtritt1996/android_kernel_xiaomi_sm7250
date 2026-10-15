@@ -46,6 +46,7 @@
 		qcom,mdss-pan-physical-width-dimension = <695>;
 		qcom,mdss-pan-physical-height-dimension = <1544>;
 		qcom,mdss-dsi-tx-eot-append;
+		qcom,mdss-dsi-force-clock-lane-hs;
 		qcom,bl-update-flag = "delay_until_first_frame";
 		qcom,disp-panel-offon-mode-enabled;
 		qcom,mdss-dsi-panel-hdr-enabled;

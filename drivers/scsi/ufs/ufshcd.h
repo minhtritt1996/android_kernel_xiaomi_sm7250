@@ -1126,11 +1126,11 @@ static inline bool ufshcd_is_shutdown_ongoing(struct ufs_hba *hba)
 /* Returns true if clocks can be gated. Otherwise false */
 static inline bool ufshcd_is_clkgating_allowed(struct ufs_hba *hba)
 {
-	return hba->caps & UFSHCD_CAP_CLK_GATING;
+	return false;
 }
 static inline bool ufshcd_can_hibern8_during_gating(struct ufs_hba *hba)
 {
-	return hba->caps & UFSHCD_CAP_HIBERN8_WITH_CLK_GATING;
+	return false;
 }
 static inline int ufshcd_is_clkscaling_supported(struct ufs_hba *hba)
 {

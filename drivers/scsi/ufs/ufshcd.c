@@ -2953,9 +2953,8 @@ static void ufshcd_init_hibern8(struct ufs_hba *hba)
 		return;
 
 	if (ufshcd_is_auto_hibern8_supported(hba)) {
-		/* Set the default auto-hiberate idle timer value to 1 ms */
-		hba->ahit = FIELD_PREP(UFSHCI_AHIBERN8_TIMER_MASK, 1) |
-			    FIELD_PREP(UFSHCI_AHIBERN8_SCALE_MASK, 3);
+		/* Disable auto-hiberate by default to prevent ext4 journal stalls */
+		hba->ahit = 0;
 		h8->state = AUTO_HIBERN8;
 		/*
 		 * Disable SW hibern8 enter on idle in case
@@ -11208,9 +11207,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
 	 * Hibern8 state and UFS device in sleep state.
 	 */
 	if (!ufshcd_is_valid_pm_lvl(hba->rpm_lvl))
-		hba->rpm_lvl = ufs_get_desired_pm_lvl_for_dev_link_state(
-							UFS_SLEEP_PWR_MODE,
-							UIC_LINK_HIBERN8_STATE);
+		hba->rpm_lvl = 0; /* UFS_PM_LVL_0 (Active, no link hibernate) */
 	if (!ufshcd_is_valid_pm_lvl(hba->spm_lvl))
 		hba->spm_lvl = ufs_get_desired_pm_lvl_for_dev_link_state(
 							UFS_SLEEP_PWR_MODE,
