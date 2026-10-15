@@ -356,10 +356,6 @@ adreno_drawctxt_create(struct kgsl_device_private *dev_priv,
 	if (!test_bit(ADRENO_DEVICE_PREEMPTION, &adreno_dev->priv))
 		local &= ~KGSL_CONTEXT_PREEMPT_STYLE_MASK;
 
-	/* On A6xx / Linux, use standard non-secure hardware context switching */
-	if (adreno_is_a6xx(adreno_dev))
-		local &= ~KGSL_CONTEXT_SECURE;
-
 	/* We no longer support legacy context switching */
 	if ((local & KGSL_CONTEXT_PREAMBLE) == 0 ||
 		(local & KGSL_CONTEXT_NO_GMEM_ALLOC) == 0) {
